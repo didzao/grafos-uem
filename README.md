@@ -22,8 +22,7 @@ O que deve ser feito?
 primeira linha do arquivo contém informação se o grafo é orientado (directed) ou não (undirected). As linhas
 seguintes representam arestas do grafo. Exemplo de arquivo e grafo:
 
-![Alt text](https://ibb.co/WyJ9QMP "Optional title")
-
+![img-grafo](https://raw.githubusercontent.com/didzao/grafos-uem/main/img/grafo.png)
 
 2. Desenvolver operações para inserção e remoção de vértices e arestas.
 3. Desenvolver procedimento para mostrar o grafo.
