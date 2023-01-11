@@ -4,6 +4,7 @@ const arquivo = prompt('Digite o caminho do arquivo: ')
 
 const lerArquivo = () => {
     let conteudo = '';
+
     if (!fs.existsSync(arquivo)) {
         console.log(`O arquivo não foi encontrado.\n
     Verifique se o nome e/ou caminho foi digitado corretamente.`);
@@ -35,10 +36,10 @@ const addValores = (chave, valor, estruturaGrafo) => {
     return
 }
 
-const geraGrafo = (path) => {
-    path.forEach((item, i) => {
+const geraGrafo = (dadoGrafo) => {
+    dadoGrafo.forEach((item, i) => {
         if (i % 2 == 0) {
-            return addValores(item, path[i + 1], grafo);
+            return addValores(item, dadoGrafo[i + 1], grafo);
         }
     });
 }
@@ -201,3 +202,10 @@ const matrizAdjacencia = () => {
 }
 
 matrizAdjacencia();
+
+
+
+
+
+
+
