@@ -1,3 +1,7 @@
+// DISCENTES
+// INGRID LOHMANN RA: 117698
+// VICTOR HUGO FRANCISCON RA: 120177
+
 const fs = require('fs');
 
 const arquivo = prompt('Digite o caminho do arquivo: ')
