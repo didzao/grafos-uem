@@ -1,6 +1,9 @@
 # grafos-uem
 Repositório para o trabalho 1 da disciplina Análise de Algoritmos e Algoritmos em Grafos - UEM
 
+# IMPORTANTE
+O trabalho <b>tem dependência da biblioteca readline-sync</b>, por esse motivo é necessário instalar a biblioteca citada, para isso, clone o repositório através e execute o comando <b>yarn install</b> no terminal na pasta do repositório clonado e em seguida execute o comando <b>node trabalho-1.js</b> para executar o código. 
+
 ## Trabalho - Parte I
 
 ### Sobre o trabalho
