@@ -4,42 +4,46 @@
 
 const fs = require('fs');
 
-const arquivo = prompt('Digite o caminho do arquivo: ')
+var readlineSync = require('readline-sync');
 
-const lerArquivo = () => {
+let dado;
+let dadoPuro;
+let tipoGrafo;
+let listaDeVertices;
+
+const grafo = new Map(); //O(1)
+const grafoTransposto = new Map(); //O(1)
+const grafoComplemento = new Map(); //O(1)
+const grafoMatriz = new Map(); //O(1)
+
+//O(1)
+const lerArquivo = (arquivo) => {
     let conteudo = '';
-
     if (!fs.existsSync(arquivo)) {
         console.log(`O arquivo não foi encontrado.\n
     Verifique se o nome e/ou caminho foi digitado corretamente.`);
     } else {
         conteudo = fs.readFileSync(arquivo, 'utf-8');
+        console.log(`\nO arquivo ${arquivo} foi lido com sucesso!`);
         return conteudo;
     }
 };
 
-const dadoPuro = lerArquivo();
 
-const tipoGrafo = dadoPuro.split("\n").slice(0, 1).toString();
-
-const dado = Array.from(dadoPuro.split("\n").slice(1).join().replace(/[\s,]+/g, ''));
-
-
-const grafo = new Map();
-const grafoTransposto = new Map();
-const grafoComplemento = new Map();
-const grafoMatrix = new Map();
-
+// O(1)
 const addValores = (chave, valor, estruturaGrafo) => {
-    if (estruturaGrafo.get(chave) == null) {
+    if (valor == null) {
+        estruturaGrafo.set(chave, []);
+    } else if (estruturaGrafo.get(chave) == null) {
         estruturaGrafo.set(chave, [valor]);
-    }
-    else {
+    } else {
         estruturaGrafo.get(chave).push(valor);
     }
     return
 }
 
+
+// O(N)
 const geraGrafo = (dadoGrafo) => {
     dadoGrafo.forEach((item, i) => {
         if (i % 2 == 0) {
@@ -48,16 +52,14 @@ const geraGrafo = (dadoGrafo) => {
     });
 }
 
-geraGrafo(dado)
-
-console.log(grafo)
-
-const removerValor = (chave, valor) => {
+// O(1)
+const removeAresta = (chave, valor) => {
     const chaveGrafo = grafo.get(chave);
     const indexValor = chaveGrafo.indexOf(valor);
     return chaveGrafo.splice(indexValor, 1);
 }
 
+// O(N²)
 const ajustaMatriz = (matriz) => {
     matriz.forEach((_, i) => {
         matriz.forEach((_, j) => {
@@ -70,26 +72,30 @@ const ajustaMatriz = (matriz) => {
     console.log(matriz);
 }
 
+
+// O(N)
 const constroiMatriz = (lista, matriz) => {
     lista.forEach((chave, i) => {
-        const vertices = Array.from(grafoMatrix.get(chave));
+        const vertices = Array.from(grafoMatriz.get(chave));
         matriz[i] = vertices;
     });
 
     return matriz;
 }
 
-const removerVertice = (chave) => {
+// 0(1)
+const removeVertice = (chave) => {
     return grafo.delete(chave)
 }
 
-
-const imprimirGrafo = () => {
-    console.log("Tipo de grafo: " + tipoGrafo);
+// 0(1)
+const imprimeGrafo = () => {
+    console.log("\nTipo de grafo: " + tipoGrafo);
     console.log(grafo);
 }
 
-const encontrarAresta = (primeiroVertice, segundoVertice) => {
+// O(1)
+const encontraAresta = (primeiroVertice, segundoVertice) => {
     const aresta = grafo.get(primeiroVertice);
 
     const encontrado = aresta.indexOf(segundoVertice)
@@ -101,7 +107,7 @@ const encontrarAresta = (primeiroVertice, segundoVertice) => {
     return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice} \'existe`);
 }
 
-
+// O(1)
 const verticesAdjacentes = (chave) => {
     const existemAdjacentes = grafo.has(chave)
 
@@ -115,6 +121,7 @@ const verticesAdjacentes = (chave) => {
 
 }
 
+// O(N)
 const geraGrafoTransposto = (dadoGrafo) => {
     dadoGrafo.forEach((item, i) => {
         if (i % 2 != 0) {
@@ -123,6 +130,7 @@ const geraGrafoTransposto = (dadoGrafo) => {
     });
 }
 
+// O(1)
 const verticesIncidente = (chave) => {
     const existemIncidentes = grafo.has(chave)
 
@@ -135,7 +143,7 @@ const verticesIncidente = (chave) => {
     return console.log(`Os vertices incidentes de \'${chave}\' são ${vertices}.`);
 }
 
-
+// O(N)
 const listaVertices = (dadoGrafo) => {
     const lista = [];
     dadoGrafo.forEach((item) => {
@@ -146,9 +154,7 @@ const listaVertices = (dadoGrafo) => {
     return lista.sort();
 }
 
-const listaDeVertices = listaVertices(dado); // pode ser global
-
-
+// O(N³)
 const geraGrafoComplemento = (lista) => {
     lista.forEach((chave) => {
         const vertices = grafo.get(chave);
@@ -168,30 +174,29 @@ const geraGrafoComplemento = (lista) => {
     });
 }
 
-geraGrafoComplemento(listaDeVertices);
-
+// O(N²)
 const inicializaGrafoMatriz = (lista) => {
     lista.forEach((chave) => {
         const vertices = grafo.get(chave);
         if (vertices == undefined) {
             lista.forEach(() => {
-                addValores(chave, 0, grafoMatrix);
+                addValores(chave, 0, grafoMatriz);
             });
         } else {
             lista.forEach((item) => {
                 if (vertices.includes(item)) {
-                    addValores(chave, 1, grafoMatrix);
+                    addValores(chave, 1, grafoMatriz);
                 }
                 else {
-                    addValores(chave, 0, grafoMatrix);
+                    addValores(chave, 0, grafoMatriz);
                 }
             });
         }
     });
 }
 
+// O(1)
 const matrizAdjacencia = () => {
-    const listaDeVertices = listaVertices(dado); // possível global
 
     inicializaGrafoMatriz(listaDeVertices);
 
@@ -205,11 +210,160 @@ const matrizAdjacencia = () => {
     return console.log(matriz);
 }
 
-matrizAdjacencia();
+const opcoesMenu =
+    `Selecione uma das opções abaixo:
+  1 - Abrir arquivo 
+  2 - Imprimir grafo 
+  3 - Adicionar vértice 
+  4 - Remover vértice 
+  5 - Adicionar aresta 
+  6 - Remover aresta 
+  7 - Encontrar aresta
+  8 - Vértices incidentes 
+  9 - Vértices adjacentes 
+  10 - Grafo complemento 
+  11 - Grafo transposto
+  12 - Matriz adjacência
+  0 - Sair`;
+
+// O(1)
+const mostraMenu = () => {
+    console.log(opcoesMenu);
+}
+
+mostraMenu();
 
 
+readlineSync.promptCLLoop({
+    1: () => {
+        //O(1)
+        const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
+        //O(1)
+        dadoPuro = lerArquivo(arquivo);
 
+        if (dadoPuro) {
+            //O(1)
+            tipoGrafo = dadoPuro.split("\n").slice(0, 1).toString();
 
+            //O(1)
+            dado = Array.from(dadoPuro.split("\n").slice(1).join().replace(/[\s,]+/g, ''));
 
+            listaDeVertices = listaVertices(dado);
 
+            geraGrafo(dado);
+        }
 
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    2: () => {
+        imprimeGrafo();
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    3: () => {
+        const chave = readlineSync.question('Digite o vértice que deseja adicionar: ');
+        addValores(chave, null, grafo);
+        console.log(`A chave \'${chave}\' foi adicionada!`);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    4: () => {
+        const chave = readlineSync.question('Digite o vértice que deseja remover: ');
+        removeVertice(chave);
+        console.log(`A chave \'${chave}\' foi removida!`);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    5: () => {
+        const verticeUm = readlineSync.question('Digite o primeiro vértice para formar a aresta: ');
+        const verticeDois = readlineSync.question('Digite o segundo vértice para formar a aresta: ');
+        addValores(verticeUm, verticeDois, grafo);
+        console.log(`A aresta (${verticeUm},${verticeDois}) foi adicionada!`);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    6: () => {
+        const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja remover: ');
+        const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja remover: ');
+        removeAresta(verticeUm, verticeDois);
+        console.log(`A aresta (${verticeUm},${verticeDois}) foi removida!`);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    7: () => {
+        const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja consultar: ');
+        const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja consultar: ');
+        encontraAresta(verticeUm, verticeDois);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    8: () => {
+        const chave = readlineSync.question('Digite o vértice que deseja consultar a incidência: ');
+        verticesIncidente(chave);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    9: () => {
+        const chave = readlineSync.question('Digite o vértice que deseja consultar a adjacência: ');
+        verticesAdjacentes(chave);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    10: () => {
+        geraGrafoComplemento(listaDeVertices);
+        console.log(grafoComplemento);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    11: () => {
+        geraGrafoTransposto(dado);
+        console.log(grafoTransposto);
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    12: () => {
+        matrizAdjacencia();
+
+        console.log(`\n`);
+
+        mostraMenu();
+    },
+
+    0: () => {
+        console.log("Programa finalizado")
+        return true;
+    }
+});
