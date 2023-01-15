@@ -274,8 +274,11 @@ readlineSync.promptCLLoop({
     },
 
     3: () => {
+        //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja adicionar: ');
+
         addValores(chave, null, grafo);
+
         console.log(`A chave \'${chave}\' foi adicionada!`);
 
         console.log(`\n`);
@@ -284,8 +287,11 @@ readlineSync.promptCLLoop({
     },
 
     4: () => {
+        //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja remover: ');
+
         removeVertice(chave);
+
         console.log(`A chave \'${chave}\' foi removida!`);
 
         console.log(`\n`);
@@ -294,9 +300,13 @@ readlineSync.promptCLLoop({
     },
 
     5: () => {
+        //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice para formar a aresta: ');
+        //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice para formar a aresta: ');
+
         addValores(verticeUm, verticeDois, grafo);
+
         console.log(`A aresta (${verticeUm},${verticeDois}) foi adicionada!`);
 
         console.log(`\n`);
@@ -305,9 +315,13 @@ readlineSync.promptCLLoop({
     },
 
     6: () => {
+        //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja remover: ');
+        //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja remover: ');
+
         removeAresta(verticeUm, verticeDois);
+
         console.log(`A aresta (${verticeUm},${verticeDois}) foi removida!`);
 
         console.log(`\n`);
@@ -316,8 +330,11 @@ readlineSync.promptCLLoop({
     },
 
     7: () => {
+        //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja consultar: ');
+        //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja consultar: ');
+
         encontraAresta(verticeUm, verticeDois);
 
         console.log(`\n`);
@@ -326,7 +343,9 @@ readlineSync.promptCLLoop({
     },
 
     8: () => {
+        //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a incidência: ');
+
         verticesIncidente(chave);
 
         console.log(`\n`);
@@ -335,7 +354,9 @@ readlineSync.promptCLLoop({
     },
 
     9: () => {
+        //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a adjacência: ');
+
         verticesAdjacentes(chave);
 
         console.log(`\n`);
@@ -345,6 +366,7 @@ readlineSync.promptCLLoop({
 
     10: () => {
         geraGrafoComplemento(listaDeVertices);
+
         console.log(grafoComplemento);
 
         console.log(`\n`);
@@ -354,6 +376,7 @@ readlineSync.promptCLLoop({
 
     11: () => {
         geraGrafoTransposto(dado);
+
         console.log(grafoTransposto);
 
         console.log(`\n`);
