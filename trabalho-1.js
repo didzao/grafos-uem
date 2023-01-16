@@ -18,12 +18,12 @@ let dadoPuro;
 let tipoGrafo;
 let listaDeVertices;
 
-const grafo = new Map(); //O(1)
-const grafoTransposto = new Map(); //O(1)
-const grafoComplemento = new Map(); //O(1)
-const grafoMatriz = new Map(); //O(1)
+const grafo = new Map(); // O(1)
+const grafoTransposto = new Map(); // O(1)
+const grafoComplemento = new Map(); // O(1)
+const grafoMatriz = new Map(); // O(1)
 
-//O(1)
+// O(1)
 const lerArquivo = (arquivo) => {
     let conteudo = '';
     if (!fs.existsSync(arquivo)) {
@@ -90,9 +90,9 @@ const constroiMatriz = (lista, matriz) => {
     return matriz;
 }
 
-// 0(N)
-const removeVertice = (chave) => {
 
+// O(N)
+const removeVertice = (chave) => {
     dado.forEach((item, index) => {
         if (item == chave && index % 2 == 0) {
             dado.splice(index, 1, '');
@@ -106,8 +106,22 @@ const removeVertice = (chave) => {
     return grafo.delete(chave);
 }
 
-// 0(1)
+// O(N)
+const removeValorVazio = () => {
+    listaDeVertices.forEach((item) => {
+        const valores = grafo.get(item);
+        if (valores !== undefined) {
+            if (valores.includes('')) {
+                const indexVazio = valores.indexOf('');
+                valores.splice(indexVazio, 1);
+            }
+        }
+    });
+}
+
+// O(N)
 const imprimeGrafo = () => {
+    removeValorVazio();
     console.log("\nTipo de grafo: " + tipoGrafo);
     console.log(grafo);
 }
@@ -141,11 +155,14 @@ const verticesAdjacentes = (chave) => {
 
 // O(N)
 const geraGrafoTransposto = (dadoGrafo) => {
+    grafoTransposto.clear();
+
     dadoGrafo.forEach((item, i) => {
-        if (i % 2 != 0) {
+        if (i % 2 != 0 && dadoGrafo[i - 1] != '') {
             return addValores(item, dadoGrafo[i - 1], grafoTransposto);
         }
     });
+    grafoTransposto.delete('');
 }
 
 // O(1)
@@ -272,16 +289,16 @@ mostraMenu();
 
 readlineSync.promptCLLoop({
     1: () => {
-        //O(1)
+        // O(1)
         const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
-        //O(1)
+        // O(1)
         dadoPuro = lerArquivo(arquivo);
 
         if (dadoPuro) {
-            //O(1)
+            // O(1)
             tipoGrafo = dadoPuro.split("\n").slice(0, 1).toString();
 
-            //O(1)
+            // O(1)
             dado = Array.from(dadoPuro.split("\n").slice(1).join().replace(/[\s,]+/g, ''));
 
             listaDeVertices = listaVertices(dado);
@@ -296,7 +313,6 @@ readlineSync.promptCLLoop({
 
     2: () => {
         if (!dadoPuro) return tratamentoErro();
-        console.log('dado', dado)
 
         imprimeGrafo();
 
@@ -308,7 +324,7 @@ readlineSync.promptCLLoop({
     3: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja adicionar: ');
 
         addValores(chave, null, grafo);
@@ -328,7 +344,7 @@ readlineSync.promptCLLoop({
     4: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja remover: ');
 
         removeVertice(chave);
@@ -339,6 +355,8 @@ readlineSync.promptCLLoop({
 
         console.log(`O vértice \'${chave}\' foi removido!`);
 
+        removeVertice('');
+
         console.log(`\n`);
 
         mostraMenu();
@@ -347,10 +365,10 @@ readlineSync.promptCLLoop({
     5: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice para formar a aresta: ');
 
-        //O(1)
+        // O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice para formar a aresta: ');
 
         addValores(verticeUm, verticeDois, grafo);
@@ -365,10 +383,10 @@ readlineSync.promptCLLoop({
     6: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja remover: ');
 
-        //O(1)
+        // O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja remover: ');
 
         removeAresta(verticeUm, verticeDois);
@@ -383,10 +401,10 @@ readlineSync.promptCLLoop({
     7: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja consultar: ');
 
-        //O(1)
+        // O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja consultar: ');
 
         encontraAresta(verticeUm, verticeDois);
@@ -399,7 +417,7 @@ readlineSync.promptCLLoop({
     8: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a incidência: ');
 
         verticesIncidente(chave);
@@ -412,7 +430,7 @@ readlineSync.promptCLLoop({
     9: () => {
         if (!dadoPuro) return tratamentoErro();
 
-        //O(1)
+        // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a adjacência: ');
 
         verticesAdjacentes(chave);
@@ -423,6 +441,10 @@ readlineSync.promptCLLoop({
     },
 
     10: () => {
+        if (!dadoPuro) return tratamentoErro();
+
+        listaDeVertices = listaVertices(dado);
+
         geraGrafoComplemento(listaDeVertices);
 
         console.log(grafoComplemento);
@@ -434,6 +456,8 @@ readlineSync.promptCLLoop({
 
     11: () => {
         if (!dadoPuro) return tratamentoErro();
+
+        if (tipoGrafo === 'undirected') return imprimeGrafo();
 
         geraGrafoTransposto(dado);
 
