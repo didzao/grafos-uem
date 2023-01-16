@@ -90,7 +90,7 @@ const constroiMatriz = (lista, matriz) => {
     return matriz;
 }
 
-// 0(1)
+// 0(N)
 const removeVertice = (chave) => {
 
     dado.forEach((item, index) => {
@@ -172,7 +172,7 @@ const listaVertices = (dadoGrafo) => {
     return lista.sort();
 }
 
-// O(N³)
+// O(N²)
 const geraGrafoComplemento = (lista) => {
     let novaLista = lista;
 
@@ -261,6 +261,7 @@ const mostraMenu = () => {
     console.log(opcoesMenu);
 }
 
+// O(1)
 const tratamentoErro = () => {
     console.log('\nVocê não selecionou nenhum arquivo. Por favor, escolha a opção 1 para carregar um arquivo antes de continuar.\n');
     return mostraMenu();
