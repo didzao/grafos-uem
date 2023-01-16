@@ -92,7 +92,18 @@ const constroiMatriz = (lista, matriz) => {
 
 // 0(1)
 const removeVertice = (chave) => {
-    return grafo.delete(chave)
+
+    dado.forEach((item, index) => {
+        if (item == chave && index % 2 == 0) {
+            dado.splice(index, 1, '');
+            dado.splice(index + 1, 1, '');
+        }
+        if (item == chave && index % 2 != 0) {
+            dado.splice(index, 1, '');
+        }
+    });
+
+    return grafo.delete(chave);
 }
 
 // 0(1)
@@ -163,16 +174,22 @@ const listaVertices = (dadoGrafo) => {
 
 // O(N³)
 const geraGrafoComplemento = (lista) => {
-    lista.forEach((chave) => {
+    let novaLista = lista;
+
+    if (lista.includes('')) {
+        novaLista = lista.slice(1);
+    }
+
+    novaLista.forEach((chave) => {
         const vertices = grafo.get(chave);
         if (vertices == undefined) {
-            lista.forEach((item) => {
+            novaLista.forEach((item) => {
                 if (item != chave) {
                     addValores(chave, item, grafoComplemento);
                 }
             });
         } else {
-            lista.forEach((item) => {
+            novaLista.forEach((item) => {
                 if (!vertices.includes(item) && item != chave) {
                     addValores(chave, item, grafoComplemento);
                 }
@@ -205,11 +222,17 @@ const inicializaGrafoMatriz = (lista) => {
 // O(1)
 const matrizAdjacencia = () => {
 
-    inicializaGrafoMatriz(listaDeVertices);
+    let novaLista = listaDeVertices;
 
-    const matrizVetor = new Array(listaDeVertices.length);
+    if (listaDeVertices.includes('')) {
+        novaLista = listaDeVertices.slice(1);
+    }
 
-    const matriz = constroiMatriz(listaDeVertices, matrizVetor);
+    inicializaGrafoMatriz(novaLista);
+
+    const matrizVetor = new Array(novaLista.length);
+
+    const matriz = constroiMatriz(novaLista, matrizVetor);
 
     console.log("Matriz de Adjacência: ");
     if (tipoGrafo === 'undirected') return ajustaMatriz(matrizVetor);
@@ -236,6 +259,11 @@ const opcoesMenu =
 // O(1)
 const mostraMenu = () => {
     console.log(opcoesMenu);
+}
+
+const tratamentoErro = () => {
+    console.log('\nVocê não selecionou nenhum arquivo. Por favor, escolha a opção 1 para carregar um arquivo antes de continuar.\n');
+    return mostraMenu();
 }
 
 mostraMenu();
@@ -266,6 +294,9 @@ readlineSync.promptCLLoop({
     },
 
     2: () => {
+        if (!dadoPuro) return tratamentoErro();
+        console.log('dado', dado)
+
         imprimeGrafo();
 
         console.log(`\n`);
@@ -274,12 +305,19 @@ readlineSync.promptCLLoop({
     },
 
     3: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja adicionar: ');
 
         addValores(chave, null, grafo);
 
-        console.log(`A chave \'${chave}\' foi adicionada!`);
+        console.log(`O vértice \'${chave}\' foi adicionado!`);
+
+        dado.push(chave);
+        dado.push('');
+
+        listaDeVertices = listaVertices(dado);
 
         console.log(`\n`);
 
@@ -287,12 +325,18 @@ readlineSync.promptCLLoop({
     },
 
     4: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja remover: ');
 
         removeVertice(chave);
 
-        console.log(`A chave \'${chave}\' foi removida!`);
+        grafo.clear();
+
+        geraGrafo(dado);
+
+        console.log(`O vértice \'${chave}\' foi removido!`);
 
         console.log(`\n`);
 
@@ -300,8 +344,11 @@ readlineSync.promptCLLoop({
     },
 
     5: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice para formar a aresta: ');
+
         //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice para formar a aresta: ');
 
@@ -315,8 +362,11 @@ readlineSync.promptCLLoop({
     },
 
     6: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja remover: ');
+
         //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja remover: ');
 
@@ -330,8 +380,11 @@ readlineSync.promptCLLoop({
     },
 
     7: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const verticeUm = readlineSync.question('Digite o primeiro vértice da aresta que deseja consultar: ');
+
         //O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja consultar: ');
 
@@ -343,6 +396,8 @@ readlineSync.promptCLLoop({
     },
 
     8: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a incidência: ');
 
@@ -354,6 +409,8 @@ readlineSync.promptCLLoop({
     },
 
     9: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         //O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a adjacência: ');
 
@@ -375,6 +432,8 @@ readlineSync.promptCLLoop({
     },
 
     11: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         geraGrafoTransposto(dado);
 
         console.log(grafoTransposto);
@@ -385,6 +444,8 @@ readlineSync.promptCLLoop({
     },
 
     12: () => {
+        if (!dadoPuro) return tratamentoErro();
+
         matrizAdjacencia();
 
         console.log(`\n`);
@@ -393,7 +454,11 @@ readlineSync.promptCLLoop({
     },
 
     0: () => {
-        console.log("Programa finalizado")
+        console.log("Programa finalizado");
         return true;
     }
-});
+},
+    {
+        limitMessage: 'Desculpe, o número digitado não corresponde a nenhuma das opções acima.'
+    }
+);
