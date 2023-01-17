@@ -2,7 +2,6 @@
 // INGRID LOHMANN RA: 117698
 // VICTOR HUGO FRANCISCON RA: 120177
 
-
 /* *** IMPORTANTE *** */
 //! O trabalho tem dependência da biblioteca readline-sync, por esse motivo
 //! é necessário instalar a biblioteca citada, para isso, clone o repositório
@@ -62,8 +61,14 @@ const geraGrafo = (dadoGrafo) => {
 // O(1)
 const removeAresta = (chave, valor) => {
     const chaveGrafo = grafo.get(chave);
-    const indexValor = chaveGrafo.indexOf(valor);
-    return chaveGrafo.splice(indexValor, 1);
+
+    if (chaveGrafo !== undefined) {
+        const indexValor = chaveGrafo.indexOf(valor);
+        chaveGrafo.splice(indexValor, 1);
+        return console.log(`A aresta (${chave},${valor}) foi removida!`);
+    }
+
+    return console.log(`A aresta (${chave},${valor}) não foi encontrada!`);
 }
 
 // O(N²)
@@ -127,30 +132,83 @@ const imprimeGrafo = () => {
 }
 
 // O(1)
-const encontraAresta = (primeiroVertice, segundoVertice) => {
+const encontraArestaDirecional = (primeiroVertice, segundoVertice) => {
     const aresta = grafo.get(primeiroVertice);
 
-    const encontrado = aresta.indexOf(segundoVertice)
+    if (aresta !== undefined) {
 
-    if (encontrado == -1) {
-        return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\' não existe`);
+        const encontrado = aresta.indexOf(segundoVertice);
+
+        if (encontrado == -1) {
+            return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\' não existe.`);
+        }
+
+        return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\' não existe.`);
     }
 
-    return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice} \'existe`);
+    if (!listaDeVertices.includes(primeiroVertice)) {
+        return console.log(`\nO vértice ${primeiroVertice} não existe!`);
+    }
+
+    return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\'existe.`);
 }
 
 // O(1)
-const verticesAdjacentes = (chave) => {
-    const existemAdjacentes = grafo.has(chave)
+const encontraArestaNaoDirecional = (primeiroVertice, segundoVertice) => {
+    let aresta = grafo.get(primeiroVertice);
+    let encontrado;
+
+    if (aresta !== undefined) {
+        encontrado = aresta.indexOf(segundoVertice);
+    }
+
+    aresta = grafo.get(segundoVertice);
+
+    if (aresta !== undefined && encontrado == -1) {
+        encontrado = aresta.indexOf(primeiroVertice);
+    }
+
+    if (encontrado == -1) {
+        return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\' não existe.`);
+    } else {
+        return console.log(`A aresta entre os vertices \'${primeiroVertice}\' e \'${segundoVertice}\'existe.`);
+    }
+}
+
+// O(1)
+const verticesAdjacentesDirecional = (chave) => {
+    const existemAdjacentes = grafo.has(chave);
 
     if (existemAdjacentes == false) {
         return console.log(`O vertice \'${chave}\' não possui vertices adjacentes.`);
     }
 
-    const vertices = grafo.get(chave)
+    const vertices = grafo.get(chave);
 
-    return console.log(`Os vertices adjacentes de \'${chave}\' são ${vertices}.`)
+    return console.log(`Os vertices adjacentes de \'${chave}\' são ${vertices}.`);
+}
 
+
+// O(N)
+const verticesAdjacentesNaoDirecional = (chave) => {
+    let listaIncidentes = [];
+
+    listaDeVertices.forEach((item) => {
+        const listaValor = grafo.get(item);
+        if (listaValor !== undefined) {
+            if (listaValor.includes(chave)) {
+                listaIncidentes.push(item);
+            }
+        }
+    });
+
+    if (listaIncidentes.length) {
+        return console.log(`Os vertices incidentes de \'${chave}\' são ${listaIncidentes}.`);
+    }
+
+    const vertices = grafo.get(chave);
+
+    return console.log(`Os vertices adjacentes de \'${chave}\' são ${vertices}.`);
 }
 
 // O(N)
@@ -166,11 +224,33 @@ const geraGrafoTransposto = (dadoGrafo) => {
 }
 
 // O(1)
-const verticesIncidente = (chave) => {
-    const existemIncidentes = grafo.has(chave)
+const verticesIncidenteDirecional = (chave) => {
+    const existemIncidentes = grafo.has(chave);
 
     if (existemIncidentes == false) {
         return console.log(`O vertice \'${chave}\' não possui vertices incidentes.`);
+    }
+
+    const vertices = grafo.get(chave);
+
+    return console.log(`Os vertices incidentes de \'${chave}\' são ${vertices}.`);
+}
+
+// O(N)
+const verticesIncidenteNaoDirecional = (chave) => {
+    let listaIncidentes = [];
+
+    listaDeVertices.forEach((item) => {
+        const listaValor = grafo.get(item);
+        if (listaValor !== undefined) {
+            if (listaValor.includes(chave)) {
+                listaIncidentes.push(item);
+            }
+        }
+    });
+
+    if (listaIncidentes.length) {
+        return console.log(`Os vertices incidentes de \'${chave}\' são ${listaIncidentes}.`);
     }
 
     const vertices = grafo.get(chave);
@@ -259,19 +339,19 @@ const matrizAdjacencia = () => {
 
 const opcoesMenu =
     `Selecione uma das opções abaixo:
-  1 - Abrir arquivo 
-  2 - Imprimir grafo 
-  3 - Adicionar vértice 
-  4 - Remover vértice 
-  5 - Adicionar aresta 
-  6 - Remover aresta 
-  7 - Encontrar aresta
-  8 - Vértices incidentes 
-  9 - Vértices adjacentes 
-  10 - Grafo complemento 
-  11 - Grafo transposto
-  12 - Matriz adjacência
-  0 - Sair`;
+  [1] Abrir arquivo 
+  [2] Imprimir grafo 
+  [3] Adicionar vértice 
+  [4] Remover vértice 
+  [5] Adicionar aresta 
+  [6] Remover aresta 
+  [7] Encontrar aresta
+  [8] Vértices incidentes 
+  [9] Vértices adjacentes 
+  [10] Grafo complemento 
+  [11] Grafo transposto
+  [12] Matriz adjacência
+  [0] Sair`;
 
 // O(1)
 const mostraMenu = () => {
@@ -286,11 +366,14 @@ const tratamentoErro = () => {
 
 mostraMenu();
 
-
+// O(N)
 readlineSync.promptCLLoop({
     1: () => {
+        grafo.clear();
+
         // O(1)
         const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
+
         // O(1)
         dadoPuro = lerArquivo(arquivo);
 
@@ -373,6 +456,9 @@ readlineSync.promptCLLoop({
 
         addValores(verticeUm, verticeDois, grafo);
 
+        dado.push(verticeUm);
+        dado.push(verticeDois);
+
         console.log(`A aresta (${verticeUm},${verticeDois}) foi adicionada!`);
 
         console.log(`\n`);
@@ -391,8 +477,6 @@ readlineSync.promptCLLoop({
 
         removeAresta(verticeUm, verticeDois);
 
-        console.log(`A aresta (${verticeUm},${verticeDois}) foi removida!`);
-
         console.log(`\n`);
 
         mostraMenu();
@@ -407,7 +491,9 @@ readlineSync.promptCLLoop({
         // O(1)
         const verticeDois = readlineSync.question('Digite o segundo vértice da aresta que deseja consultar: ');
 
-        encontraAresta(verticeUm, verticeDois);
+        if (tipoGrafo === 'directed') return encontraArestaDirecional(verticeUm, verticeDois);
+
+        if (tipoGrafo === 'undirected') return encontraArestaNaoDirecional(verticeUm, verticeDois);
 
         console.log(`\n`);
 
@@ -420,7 +506,9 @@ readlineSync.promptCLLoop({
         // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a incidência: ');
 
-        verticesIncidente(chave);
+        if (tipoGrafo === 'directed') return verticesIncidenteDirecional(chave);
+
+        if (tipoGrafo === 'undirected') return verticesIncidenteNaoDirecional(chave);
 
         console.log(`\n`);
 
@@ -433,7 +521,9 @@ readlineSync.promptCLLoop({
         // O(1)
         const chave = readlineSync.question('Digite o vértice que deseja consultar a adjacência: ');
 
-        verticesAdjacentes(chave);
+        if (tipoGrafo === 'directed') return verticesAdjacentesDirecional(chave);
+
+        if (tipoGrafo === 'undirected') return verticesAdjacentesNaoDirecional(chave);
 
         console.log(`\n`);
 
