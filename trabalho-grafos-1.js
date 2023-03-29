@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 
-var readlineSync = require('readline-sync');
+const readlineSync = require('readline-sync');
 
 let dado;
 let dadoPuro;
