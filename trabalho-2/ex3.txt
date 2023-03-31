@@ -1,0 +1,10 @@
+directed
+s t 3
+s u 6
+s x -4
+t v 4
+t x 7
+u t 2
+v u -5
+v s 1
+x v 8
