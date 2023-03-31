@@ -1,5 +1,3 @@
-// BELLMON-FORD
-
 const formataGrafo = require("./formataGrafo");
 
 const bellmanFord = (vertices, grafo, source) => {
