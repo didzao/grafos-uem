@@ -1,3 +1,13 @@
+// DISCENTES
+// INGRID LOHMANN RA: 117698
+// VICTOR HUGO FRANCISCON RA: 120177
+
+/* *** IMPORTANTE *** */
+//! O trabalho tem dependência da biblioteca readline-sync, por esse motivo
+//! é necessário instalar a biblioteca citada, para isso, clone o repositório
+//! através do link https://github.com/didzao/grafos-uem#readme e execute o comando yarn install
+//! no terminal na pasta do repositório clonado e em seguida execute o comando node index.js (localizado na pasta trabalho-2) para executar o código. 
+
 const fs = require('fs');
 
 const bellmanFord = require('./bellmanFord');

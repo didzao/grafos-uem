@@ -41,12 +41,13 @@ class disjointSetUnion {
 }
 
 const kruskal = (vertices, grafo, pesos) => {
-    let mst = []; //! MST – Minimum Spanning Trees
+    let mst = []; //! MST – Minimum Spanning Trees - Árvores Abrangentes Mínimas
 
     let arestas = [];
 
 
-    const grafoObj = formataGrafo(vertices, grafo)
+    const grafoObj = formataGrafo(vertices, grafo);
+
 
     //! ajusta arestas para ficar no formato [[x, y], [u, v]]
     arestas = grafoObj.map((item) => [item.u, item.v]);
