@@ -1,18 +1,24 @@
 {
-  "name": "nodejs",
+  "name": "grafos-uem",
+  "description": "Repositório para o trabalho 2 da disciplina Análise de Algoritmos e Algoritmos em Grafos - UEM",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "backup.js",
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didzao/grafos-uem.git"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Ingrid Lohmann e Victor Hugo Franciscon",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/didzao/grafos-uem/issues"
+  },
+  "homepage": "https://github.com/didzao/grafos-uem#readme",
   "dependencies": {
-    "@angular-devkit/core": "^15.2.4",
-    "@types/node": "^18.0.6",
-    "node-fetch": "^3.2.6",
     "readline-sync": "^1.4.10"
   }
 }
