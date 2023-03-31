@@ -1,0 +1,11 @@
+directed
+p q 1
+p s 6
+p t 7
+q r 1
+q s 4
+s t 3
+s u 2
+r s 2
+r u 1
+t u 2
