@@ -10,12 +10,14 @@ const dijkstra = require('./dijkstra.js');
 
 const floydWarshall = require('./floydWarshall.js');
 
-const regex = /[A-Za-z]/g;
+const regexLetras = /[A-Za-z]/g;
+const regexNumeros = /-?\d+/g;
 
 const readlineSync = require('readline-sync');
 
 let dado;
 let dadoPuro;
+let dadoPuroComTipo;
 let tipoGrafo;
 let dadoComPesos;
 let dadoSemPesos;
@@ -25,7 +27,6 @@ let pesos = [];
 let pesosSemSinal = [];
 
 const grafo = new Map();
-const grafoMatriz = new Map();
 const pai = new Map();
 const grafoPesos = new Map();
 
@@ -59,58 +60,29 @@ const geraGrafoPesos = (dadoGrafo, peso) => {
   });
 }
 
-const formataDadoPuro = () => Array.from(dadoPuro.split("\n").slice(1).join().replace(/[\s,]+/g, ''));
+const formataDadoPuro = () => Array.from(dadoPuroComTipo.split("\n").slice(1).join().replace(/[\s,]+/g, ''));
 
 const isolaPesosLetras = (data) => {
-  data.forEach((item, index = 1) => {
-
-    const peso = item.match(/\d+/g);
-    const minusSign = item.includes('-');
-
-    if (minusSign) {
-      pesos.push(Number(data[index + 1] * -1));
-    }
-
-    if (peso) {
-      if (!pesos.includes(Number(peso * -1))) {
-        pesos.push(Number(peso));
-      }
-      pesosSemSinal.push(Number(peso));
-    }
-  });
+  data.forEach((element) => {
+    if (element.match(regexNumeros)) return pesos.push(element)
+  })
+  //pesos = (data.match(regexNumeros));
 }
 
 const isolaPesosNumero = (data) => {
-  for (let index = 2; index < data.length; index += 3) {
-    pesos.push(Number(data[index]));
-    pesosSemSinal.push(Number(data[index]));
+  const novoDado = data.match(regexNumeros);
+
+  for (let index = 2; index < novoDado.length; index += 3) {
+    pesos.push(Number(novoDado[index]));
+    novoDado.splice(index, 1, 'a');
   }
-}
 
-const removePesos = () => {
-  dadoSemPesos = formataDadoPuro();
-
-  pesosSemSinal.forEach((itemNumber) => {
-    dadoSemPesos.forEach((itemDado, index) => {
-      if (itemNumber == itemDado) {
-        dadoSemPesos.splice(index, 1, '');
-
-        const indexVazio = dadoSemPesos.indexOf('');
-
-        dadoSemPesos.splice(indexVazio, 1);
-      }
-
-      if (itemDado == '-') {
-        dadoSemPesos.splice(index, 1, ''); // remove o sinal de "-"
-
-        const indexVazio = dadoSemPesos.indexOf('');
-
-        dadoSemPesos.splice(indexVazio, 1);
-      }
-    });
-
-
+  novoDado.forEach(() => {
+    const indexVazio = novoDado.indexOf('a');
+    novoDado.splice(indexVazio, 1);
   });
+
+  dadoSemPesos = novoDado;
 }
 
 const listaVertices = (dadoGrafo) => {
@@ -154,23 +126,38 @@ const verticesAdjacentes = (chave, estruturaGrafo) => {
 
 const ajustaGrafo = () => {
   const grafoAjustado = new Map(grafoPesos);
+
   listaDeVertices.forEach((item) => {
+
     let listaValor = verticesAdjacentes(item, grafoPesos);
+
     if (listaValor != undefined) {
+
       listaValor.forEach((element) => {
+
         const verticeAtual = grafoAjustado.get(element.valor);
+
         if (verticeAtual != undefined) {
+
           if (!verticeAtual.some(e => e.valor === item)) {
             verticeAtual.push({ valor: item, peso: element.peso });
           }
-        }
-        else {
+
+        } else {
           grafoAjustado.set(element.valor, [{ valor: item, peso: element.peso }]);
         }
       });
     }
   });
   return grafoAjustado;
+}
+
+const removePesosLetras = (dado) => {
+  const novoDado = dado.map((item) => {
+    return item.replace(regexNumeros, '');
+  })
+
+  return Array.from(novoDado.toString().replace(/[\s,]+/g, ''));
 }
 
 const opcoesMenu =
@@ -195,30 +182,29 @@ readlineSync.promptCLLoop({
     grafo.clear();
 
     const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
-    //const arquivo = "./u.txt"
 
-    dadoPuro = lerArquivo(arquivo);
+    dadoPuroComTipo = lerArquivo(arquivo);
 
-    if (dadoPuro) {
+    if (dadoPuroComTipo) {
       // O(1)
-      tipoGrafo = dadoPuro.split("\n").slice(0, 1).toString();
+      tipoGrafo = dadoPuroComTipo.split("\n").slice(0, 1).toString();
 
       // O(1)
       dado = formataDadoPuro();
 
       dadoComPesos = formataDadoPuro();
 
-      if (regex.test(dadoComPesos)) {
-        isolaPesosLetras(dadoComPesos)
+      dadoPuro = dadoPuroComTipo.replace(tipoGrafo, '').toString().split('\n').slice(1);
+
+
+      if (regexLetras.test(dadoComPesos)) {
+        isolaPesosLetras(dadoPuroComTipo)
+        dadoSemPesos = removePesosLetras(dadoPuro);
       } else {
-        isolaPesosNumero(dadoComPesos)
+        isolaPesosNumero(dadoPuroComTipo);
       }
 
-      removePesos()
-
       listaDeVertices = listaVertices(dadoSemPesos);
-
-      geraGrafo(dado);
 
       geraGrafoPesos(dadoSemPesos, pesos);
 
@@ -233,7 +219,7 @@ readlineSync.promptCLLoop({
   },
 
   2: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     console.log(`\n`);
 
@@ -242,10 +228,12 @@ readlineSync.promptCLLoop({
     console.log(`\n`);
 
     mostraMenu();
+
+    grafoPesosAjustado.clear();
   },
 
   3: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     // O(1)
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
@@ -263,7 +251,7 @@ readlineSync.promptCLLoop({
   },
 
   4: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     // O(1)
     console.log("\nResultado do algortimo de Kruskal: ");
@@ -276,7 +264,7 @@ readlineSync.promptCLLoop({
   },
 
   5: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
@@ -293,7 +281,7 @@ readlineSync.promptCLLoop({
   },
 
   6: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
@@ -302,9 +290,11 @@ readlineSync.promptCLLoop({
     const bellFord = bellmanFord(listaDeVertices, grafoPesos, vertice);
 
     // O(1)
-    console.log("\nResultado do algortimo de BellmanFord: ");
+    if (bellFord) {
+      console.log("\nResultado do algortimo de BellmanFord: ");
+      console.log(bellFord)
+    }
 
-    console.log(bellFord)
 
     console.log(`\n`);
 
@@ -312,7 +302,7 @@ readlineSync.promptCLLoop({
   },
 
   7: () => {
-    if (!dadoPuro) return tratamentoErro();
+    if (!dadoPuroComTipo) return tratamentoErro();
 
     console.log("Resultado do algoritmo de Floyd-Warshall");
 

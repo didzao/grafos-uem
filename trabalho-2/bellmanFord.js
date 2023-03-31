@@ -27,8 +27,7 @@ const bellmanFord = (vertices, grafo, source) => {
 
   for (let { u, v, w } of grafoObj) {
     if (distancia[u] + w < distancia[v]) {
-      console.log('OPA! O grafo contém um ciclo de peso negativo!')
-      throw new Error("O grafo contém um ciclo de peso negativo!");
+      return console.log('OPA! O grafo contém um ciclo de peso negativo!')
     }
   }
 
