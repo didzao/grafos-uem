@@ -1,6 +1,6 @@
 const formataGrafo = require("./formataGrafo");
 
-class disjointSetUnion {
+class disjointSetUnion { //! União de conjuntos disjuntos
     constructor() {
         this.parents = [];
     }
@@ -11,27 +11,27 @@ class disjointSetUnion {
             if (this.parents[x] < 0) {
                 return x; //! x é pai
             } else {
-                return this.findSet(this.parents[x]); //!! recursão até achar o pai de x
+                return this.findSet(this.parents[x]); //! recursão até achar o pai de x
             }
 
         } else {
-            this.parents[x] = -1; //!! inicialize este vértice como pai (-1)
-            return x; //!! retorna o index do pai
+            this.parents[x] = -1; //! inicializa este vértice como pai (-1)
+            return x; //! retorna o index do pai
         }
     }
 
     union = (x, y) => {
-        var xpar = this.findSet(x);
-        var ypar = this.findSet(y);
+        let xpar = this.findSet(x);
+        let ypar = this.findSet(y);
 
         if (xpar != ypar) {
-            //!! o pai de x também é o pai de y. 
-            //!! se y já era pai de mais de um vértice, então todos esses vértices estão conectados com o pai de x 
+            //! o pai de x também é o pai de y. 
+            //! se y já era pai de mais de um vértice, então todos esses vértices estão conectados com o pai de x 
             this.parents[xpar] += this.parents[ypar];
             this.parents[ypar] = xpar;
             return false;
         } else {
-            return true; //!! cria um ciclo
+            return true; //! cria um ciclo
         }
     }
 
@@ -62,9 +62,9 @@ const kruskal = (vertices, grafo, pesos) => {
 
     //! 2. Pick the smallest edge.
 
-    var custoMinimoTotal = 0;
+    let custoMinimoTotal = 0;
 
-    var dsu = new disjointSetUnion();
+    let dsu = new disjointSetUnion();
 
     for (let i = 0; i < pesos.length; i++) {
         if (dsu.findSet(arestas[i][0]) != dsu.findSet(arestas[i][1])) {
