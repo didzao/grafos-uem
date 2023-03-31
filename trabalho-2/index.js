@@ -20,9 +20,9 @@ let tipoGrafo;
 let dadoComPesos;
 let dadoSemPesos;
 let listaDeVertices;
-
-let pesosSemSinal = [];
+let grafoPesosAjustado;
 let pesos = [];
+let pesosSemSinal = [];
 
 const grafo = new Map();
 const grafoMatriz = new Map();
@@ -153,25 +153,24 @@ const verticesAdjacentes = (chave, estruturaGrafo) => {
 }
 
 const ajustaGrafo = () => {
-  const grafoPesosAjustado = new Map(grafoPesos);
+  const grafoAjustado = new Map(grafoPesos);
   listaDeVertices.forEach((item) => {
     let listaValor = verticesAdjacentes(item, grafoPesos);
     if (listaValor != undefined) {
       listaValor.forEach((element) => {
-        const verticeAtual = grafoPesosAjustado.get(element.valor);
+        const verticeAtual = grafoAjustado.get(element.valor);
         if (verticeAtual != undefined) {
           if (!verticeAtual.some(e => e.valor === item)) {
             verticeAtual.push({ valor: item, peso: element.peso });
           }
         }
         else {
-          grafoPesosAjustado.set(element.valor, [{ valor: item, peso: element.peso }]);
+          grafoAjustado.set(element.valor, [{ valor: item, peso: element.peso }]);
         }
       });
     }
   });
-  //console.log("GRAFO", grafoPesosAjustado);
-  return grafoPesosAjustado;
+  return grafoAjustado;
 }
 
 const opcoesMenu =
@@ -188,37 +187,6 @@ const opcoesMenu =
 const mostraMenu = () => {
   console.log(opcoesMenu);
 }
-
-const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
-//const arquivo = "./u.txt"
-
-dadoPuro = lerArquivo(arquivo);
-
-if (dadoPuro) {
-  // O(1)
-  tipoGrafo = dadoPuro.split("\n").slice(0, 1).toString();
-
-  // O(1)
-  dado = formataDadoPuro();
-
-  dadoComPesos = formataDadoPuro();
-
-  if (regex.test(dadoComPesos)) {
-    isolaPesosLetras(dadoComPesos)
-  } else {
-    isolaPesosNumero(dadoComPesos)
-  }
-
-  removePesos()
-
-  listaDeVertices = listaVertices(dadoSemPesos);
-
-  geraGrafo(dado);
-
-  geraGrafoPesos(dadoSemPesos, pesos);
-}
-
-const grafoPesosAjustado = ajustaGrafo();
 
 mostraMenu();
 
@@ -253,9 +221,11 @@ readlineSync.promptCLLoop({
       geraGrafo(dado);
 
       geraGrafoPesos(dadoSemPesos, pesos);
+
+      grafoPesosAjustado = ajustaGrafo();
     }
 
-    const grafoPesosAjustado = ajustaGrafo();
+    grafoPesosAjustado = ajustaGrafo();
 
     console.log(`\n`);
 
@@ -264,6 +234,8 @@ readlineSync.promptCLLoop({
 
   2: () => {
     if (!dadoPuro) return tratamentoErro();
+
+    console.log(`\n`);
 
     console.log(grafoPesosAjustado);
 
@@ -279,7 +251,7 @@ readlineSync.promptCLLoop({
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
     console.log(`\n`);
-    
+
     prim(vertice, grafoPesosAjustado, listaDeVertices, pai, verticesAdjacentes);
 
     console.log("Resultado do algortimo de Prim: ");
@@ -308,8 +280,8 @@ readlineSync.promptCLLoop({
 
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
-    console.log(`\n`); 
-    
+    console.log(`\n`);
+
     dijkstra(vertice, grafoPesosAjustado, listaDeVertices, pai, verticesAdjacentes);
 
     console.log("Resultado do algortimo de Dijkstra: ")
@@ -326,7 +298,7 @@ readlineSync.promptCLLoop({
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
     console.log(`\n`);
-    
+
     const bellFord = bellmanFord(listaDeVertices, grafoPesos, vertice);
 
     // O(1)
@@ -343,7 +315,7 @@ readlineSync.promptCLLoop({
     if (!dadoPuro) return tratamentoErro();
 
     console.log("Resultado do algoritmo de Floyd-Warshall");
-    
+
     floydWarshall(listaDeVertices, grafoPesosAjustado);
 
     console.log(`\n`);
