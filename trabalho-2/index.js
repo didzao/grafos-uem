@@ -1,13 +1,3 @@
-// DISCENTES
-// INGRID LOHMANN RA: 117698
-// VICTOR HUGO FRANCISCON RA: 120177
-
-/* *** IMPORTANTE *** */
-//! O trabalho tem dependência da biblioteca readline-sync, por esse motivo
-//! é necessário instalar a biblioteca citada, para isso, clone o repositório
-//! através do link https://github.com/didzao/grafos-uem#readme e execute o comando yarn install
-//! no terminal na pasta do repositório clonado e em seguida execute o comando node index.js (localizado na pasta trabalho-2) para executar o código. 
-
 const fs = require('fs');
 
 const bellmanFord = require('./bellmanFord');
@@ -75,8 +65,7 @@ const formataDadoPuro = () => Array.from(dadoPuroComTipo.split("\n").slice(1).jo
 const isolaPesosLetras = (data) => {
   data.forEach((element) => {
     if (element.match(regexNumeros)) return pesos.push(element)
-  })
-  //pesos = (data.match(regexNumeros));
+  });
 }
 
 const isolaPesosNumero = (data) => {
@@ -208,7 +197,7 @@ readlineSync.promptCLLoop({
 
 
       if (regexLetras.test(dadoComPesos)) {
-        isolaPesosLetras(dadoPuroComTipo)
+        isolaPesosLetras(dadoPuro)
         dadoSemPesos = removePesosLetras(dadoPuro);
       } else {
         isolaPesosNumero(dadoPuroComTipo);
