@@ -16,15 +16,14 @@ const regexNumeros = /-?\d+/g;
 const readlineSync = require('readline-sync');
 
 let dado;
-let dadoPuro;
+let arrayDado;
 let dadoPuroComTipo;
 let tipoGrafo;
-let dadoComPesos;
 let dadoSemPesos;
 let listaDeVertices;
 let grafoPesosAjustado;
 let pesos = [];
-let pesosSemSinal = [];
+
 
 const grafo = new Map();
 const pai = new Map();
@@ -64,7 +63,7 @@ const formataDadoPuro = () => Array.from(dadoPuroComTipo.split("\n").slice(1).jo
 
 const isolaPesosLetras = (data) => {
   data.forEach((element) => {
-    if (element.match(regexNumeros)) return pesos.push(element)
+    if (element.match(regexNumeros)) return pesos.push(Number(element))
   });
 }
 
@@ -94,23 +93,6 @@ const listaVertices = (dadoGrafo) => {
   return lista.sort();
 }
 
-const geraGrafo = (dadoGrafo) => {
-  dadoGrafo.forEach((item, i) => {
-    if (i % 2 == 0) {
-      return addValores(item, dadoGrafo[i + 1], grafo);
-    }
-  });
-}
-
-const addValores = (chave, valor, estruturaGrafo) => {
-  if (valor == null) {
-    estruturaGrafo.set(chave, []);
-  } else if (estruturaGrafo.get(chave) == null) {
-    estruturaGrafo.set(chave, [valor]);
-  } else {
-    estruturaGrafo.get(chave).push(valor);
-  }
-}
 
 const verticesAdjacentes = (chave, estruturaGrafo) => {
   var adjacentes = estruturaGrafo.get(chave);
@@ -178,27 +160,28 @@ mostraMenu();
 
 readlineSync.promptCLLoop({
   1: () => {
-    grafo.clear();
+    grafoPesosAjustado.clear();
+
+    pesos = [];
 
     const arquivo = readlineSync.question('Digite o caminho do arquivo: ');
 
     dadoPuroComTipo = lerArquivo(arquivo);
 
     if (dadoPuroComTipo) {
-      // O(1)
+
       tipoGrafo = dadoPuroComTipo.split("\n").slice(0, 1).toString();
 
-      // O(1)
+
       dado = formataDadoPuro();
 
-      dadoComPesos = formataDadoPuro();
+      arrayDado = dadoPuroComTipo.replace(tipoGrafo, '').toString().split('\n').slice(1);
 
-      dadoPuro = dadoPuroComTipo.replace(tipoGrafo, '').toString().split('\n').slice(1);
+      dado = formataDadoPuro(arrayDado);
 
-
-      if (regexLetras.test(dadoComPesos)) {
-        isolaPesosLetras(dadoPuro)
-        dadoSemPesos = removePesosLetras(dadoPuro);
+      if (regexLetras.test(dado)) {
+        isolaPesosLetras(dado)
+        dadoSemPesos = removePesosLetras(dado);
       } else {
         isolaPesosNumero(dadoPuroComTipo);
       }
@@ -234,7 +217,6 @@ readlineSync.promptCLLoop({
   3: () => {
     if (!dadoPuroComTipo) return tratamentoErro();
 
-    // O(1)
     const vertice = readlineSync.question('Digite o vértice inicial do algoritmo: ');
 
     console.log(`\n`);
@@ -252,7 +234,7 @@ readlineSync.promptCLLoop({
   4: () => {
     if (!dadoPuroComTipo) return tratamentoErro();
 
-    // O(1)
+
     console.log("\nResultado do algortimo de Kruskal: ");
 
     kruskal(listaDeVertices, grafoPesos, pesos);
@@ -288,7 +270,7 @@ readlineSync.promptCLLoop({
 
     const bellFord = bellmanFord(listaDeVertices, grafoPesos, vertice);
 
-    // O(1)
+
     if (bellFord) {
       console.log("\nResultado do algortimo de BellmanFord: ");
       console.log(bellFord)
